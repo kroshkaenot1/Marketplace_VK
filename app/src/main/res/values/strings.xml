@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Marketplace_VK</string>
+    <string name="retrofit_gson_date_format">yyyy-MM-dd\'T\'HH:mm:ss</string>
+    <string name="retrofit_url">https://dummyjson.com/</string>
+</resources>
