@@ -8,13 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -34,25 +34,51 @@ fun ProductCard(
     product: Product,
     onProductClick: (Product) -> Unit
 ) {
-    product.images = mutableListOf<String>().apply {
-        add(product.thumbnail)
-        addAll(product.images)
-    }
-    Column(modifier = modifier.padding(10.dp)) {
-        Box(modifier = modifier) {
-            LazyRow(
-                modifier = modifier
-                    .height(200.dp)
-            ) {
-                items(product.images.size) { index ->
-                    GlideImage(
-                        modifier = Modifier.fillMaxSize(),
-                        model = product.images[index],
-                        contentDescription = null,
-                        transition = CrossFade
-                    )
+    Column(modifier = modifier
+        .padding(10.dp)
+        .pointerInput(Unit) {
+            var startPos = androidx.compose.ui.geometry.Offset.Zero
+            var movedFarEnough = false
+            awaitPointerEventScope {
+                while (true) {
+                    val event = awaitPointerEvent()
+                    when (event.type) {
+                        PointerEventType.Press -> {
+                            startPos = event.changes.first().position
+                            movedFarEnough = false
+                        }
+
+                        PointerEventType.Move -> {
+                            if (!movedFarEnough) {
+                                val currentPosition = event.changes.last().position
+                                val distanceX = kotlin.math.abs(currentPosition.x - startPos.x)
+                                val distanceY = kotlin.math.abs(currentPosition.y - startPos.y)
+                                movedFarEnough = distanceX.coerceAtLeast(distanceY) > 20.dp.toPx()
+                            }
+                        }
+
+                        PointerEventType.Release -> {
+                            if (event.changes.first().position == event.changes.last().position &&
+                                !movedFarEnough
+                            ) {
+                                onProductClick(product)
+                            }
+                        }
+
+                        else -> {}
+                    }
                 }
             }
+        }) {
+        Box(modifier = modifier) {
+            GlideImage(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(shape = RoundedCornerShape(10.dp)),
+                model = product.thumbnail,
+                contentDescription = null,
+                transition = CrossFade
+            )
             Box(
                 modifier = modifier
                     .size(28.dp)
@@ -71,19 +97,7 @@ fun ProductCard(
             }
         }
         Spacer(modifier = modifier.height(8.dp))
-        Column(modifier = modifier.pointerInput(Unit) {
-            awaitPointerEventScope {
-                while (true) {
-                    val event = awaitPointerEvent()
-                    when (event.type) {
-                        PointerEventType.Release -> {
-                            onProductClick(product)
-                        }
-                        else -> {}
-                    }
-                }
-            }
-        }){
+        Column() {
             Text(
                 text = "${product.price} ₽",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)

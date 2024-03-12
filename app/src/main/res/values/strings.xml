@@ -2,4 +2,12 @@
     <string name="app_name">Marketplace_VK</string>
     <string name="retrofit_gson_date_format">yyyy-MM-dd\'T\'HH:mm:ss</string>
     <string name="retrofit_url">https://dummyjson.com/</string>
+    <string name="buy_now">КУПИТЬ СЕЙЧАС</string>
+    <string name="add_to_card">В КОРЗИНУ</string>
+    <string name="with_discount">со скидкой</string>
+    <string name="without_discount">без скидки</string>
+    <string name="description">ОПИСАНИЕ</string>
+    <string name="about_brand">О БРЕНДЕ</string>
+    <string name="quantity">КОЛИЧЕСТВО/ШТ</string>
+    <string name="out_of_stock">НЕТ В НАЛИЧИИ</string>
 </resources>
