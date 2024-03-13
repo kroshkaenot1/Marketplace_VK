@@ -10,4 +10,8 @@ class ProductsRepositoryImpl @Inject constructor(
 ) : ProductsRepository {
     override suspend fun getProducts(skip: Int, limit: Int): ListOfProducts =
         apiProducts.getProducts(skip = skip, limit = limit)
+
+    override suspend fun searchProducts(skip: Int, limit: Int, name: String): ListOfProducts =
+        apiProducts.searchProducts(skip = skip, limit = limit, name = name)
+
 }

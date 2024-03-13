@@ -10,4 +10,11 @@ interface APIProducts {
         @Query("skip") skip: Int,
         @Query("limit") limit: Int
     ): ListOfProducts
+
+    @GET("products/search")
+    suspend fun searchProducts(
+        @Query("q") name: String,
+        @Query("skip") skip: Int,
+        @Query("limit") limit: Int
+    ): ListOfProducts
 }

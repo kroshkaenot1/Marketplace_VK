@@ -8,4 +8,10 @@ interface ProductsRepository {
         skip: Int = 0,
         limit: Int = Constants.productsLoadQuantity
     ): ListOfProducts
+
+    suspend fun searchProducts(
+        skip: Int = 0,
+        limit: Int = Constants.productsLoadQuantity,
+        name: String
+    ): ListOfProducts
 }

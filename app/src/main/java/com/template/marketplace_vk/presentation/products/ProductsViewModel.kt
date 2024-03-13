@@ -18,18 +18,41 @@ class ProductsViewModel @Inject constructor(
     private val _listOfProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
     val listOfProducts = _listOfProducts.asStateFlow()
 
+    private val _isSearchInProgress:MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isSearchInProgress = _isSearchInProgress.asStateFlow()
     init {
         getProducts()
     }
 
     fun getProducts() {
         viewModelScope.launch {
+            _isSearchInProgress.emit(true)
             val skip = _listOfProducts.value.size
             _listOfProducts.emit(
                 _listOfProducts.value.plus(
                     productsRepository.getProducts(skip = skip).products
                 )
             )
+            _isSearchInProgress.emit(false)
+        }
+    }
+
+    fun searchProducts(name: String) {
+        viewModelScope.launch {
+            _isSearchInProgress.emit(true)
+            val skip = _listOfProducts.value.size
+            _listOfProducts.emit(
+                _listOfProducts.value.plus(
+                    productsRepository.searchProducts(skip = skip, name = name).products
+                )
+            )
+            _isSearchInProgress.emit(false)
+        }
+    }
+
+    fun clearProductsList() {
+        viewModelScope.launch {
+            _listOfProducts.emit(emptyList())
         }
     }
 }

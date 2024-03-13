@@ -10,4 +10,6 @@
     <string name="about_brand">О БРЕНДЕ</string>
     <string name="quantity">КОЛИЧЕСТВО/ШТ</string>
     <string name="out_of_stock">НЕТ В НАЛИЧИИ</string>
+    <string name="search_bar_placeholder">НАЙТИ ТОВАРЫ</string>
+    <string name="nothing_was_found">Ничего не найдено. Попробуйте изменить запрос и мы поищем ещё раз.</string>
 </resources>
