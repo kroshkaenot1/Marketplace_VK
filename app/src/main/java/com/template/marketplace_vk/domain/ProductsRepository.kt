@@ -14,4 +14,6 @@ interface ProductsRepository {
         limit: Int = Constants.productsLoadQuantity,
         name: String
     ): ListOfProducts
+
+    suspend fun getCategories(): List<String>
 }

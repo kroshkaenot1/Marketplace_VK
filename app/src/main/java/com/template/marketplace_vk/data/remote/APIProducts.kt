@@ -17,4 +17,7 @@ interface APIProducts {
         @Query("skip") skip: Int,
         @Query("limit") limit: Int
     ): ListOfProducts
+
+    @GET("product/categories")
+    suspend fun getCategories(): List<String>
 }

@@ -54,6 +54,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.compose.material:material-icons-extended-android:1.6.3")
     //glide
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 

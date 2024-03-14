@@ -1,11 +1,5 @@
 package com.template.marketplace_vk.presentation.products
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.TextFieldValue
@@ -32,6 +25,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.template.marketplace_vk.R
 import com.template.marketplace_vk.data.models.Product
 import com.template.marketplace_vk.presentation.product.ProductDetails
+import com.template.marketplace_vk.presentation.products.animations.AnimatedFiltersOpen
+import com.template.marketplace_vk.presentation.products.animations.AnimatedProductDetails
+import com.template.marketplace_vk.presentation.products.components.Filters
 import com.template.marketplace_vk.presentation.products.components.ProductCard
 import com.template.marketplace_vk.presentation.products.components.TopAppBar
 import com.template.marketplace_vk.presentation.splash.SplashScreen
@@ -54,13 +50,16 @@ fun Products(
     val textState = remember {
         mutableStateOf(TextFieldValue(""))
     }
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val cellWidth = 181.dp
-    val columnCount = (screenWidth / cellWidth).toInt()
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
-
+    var isFiltersOpen by remember { mutableStateOf(false) }
     Scaffold(
-        topBar = { TopAppBar(searchBarState = searchBarState, textState = textState) }
+        topBar = {
+            TopAppBar(
+                searchBarState = searchBarState,
+                textState = textState,
+                onFiltersOpen = { isFiltersOpen = true })
+        }
     ) { paddingValues ->
         if (listOfProducts.value.isEmpty()) {
             if (!isSearchInProgress.value) {
@@ -84,19 +83,25 @@ fun Products(
                             while (true) {
                                 val event = awaitPointerEvent()
                                 when (event.type) {
-                                    PointerEventType.Press -> { focusManager.clearFocus() }
-                                    else -> { focusManager.clearFocus() }
+                                    PointerEventType.Press -> {
+                                        focusManager.clearFocus()
+                                    }
+
+                                    else -> {
+                                        focusManager.clearFocus()
+                                    }
                                 }
                             }
                         }
                     },
-                columns = GridCells.Fixed(columnCount),
+                columns = GridCells.Adaptive(cellWidth),
                 state = lazyGridState
             ) {
                 items(listOfProducts.value.size) { index ->
-                    if ((index == listOfProducts.value.size - 1
-                                && lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == index)
+                    if (index == listOfProducts.value.size - 1
+                        && lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == index
                         && !isSearchInProgress.value
+                        && listOfProducts.value.size >= 20
                     ) {
                         if (searchBarState.value == SearchBarStates.SEARCHING) {
                             productsViewModel.searchProducts(name = textState.value.text)
@@ -112,17 +117,20 @@ fun Products(
             }
         }
     }
-    AnimatedVisibility(
-        visible = selectedProduct != null,
-        enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(800)),
-        exit = slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(500)),
-    ) {
+    AnimatedProductDetails(product = selectedProduct, content = {
         selectedProduct?.let { product ->
-            ProductDetails(
-                product = product,
-                onClose = { selectedProduct = null }
-            )
-            focusManager.clearFocus()
+            ProductDetails(product = product, onClose = {
+                selectedProduct = null
+                focusManager.clearFocus()
+            })
         }
-    }
+    })
+    AnimatedFiltersOpen(
+        isFiltersOpen = isFiltersOpen,
+        content = {
+            Filters(onClose = {
+                isFiltersOpen = false
+                focusManager.clearFocus()
+            })
+        })
 }

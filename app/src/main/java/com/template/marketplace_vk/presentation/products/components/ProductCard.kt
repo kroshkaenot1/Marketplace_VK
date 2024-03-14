@@ -1,5 +1,6 @@
 package com.template.marketplace_vk.presentation.products.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -22,10 +24,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bumptech.glide.integration.compose.CrossFade
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.GlideSubcomposition
+import com.bumptech.glide.integration.compose.RequestState
 import com.template.marketplace_vk.data.models.Product
+import com.template.marketplace_vk.presentation.utils.shimmerEffect
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -37,7 +40,7 @@ fun ProductCard(
     Column(modifier = modifier
         .padding(10.dp)
         .pointerInput(Unit) {
-            var startPos = androidx.compose.ui.geometry.Offset.Zero
+            var startPos = Offset.Zero
             var movedFarEnough = false
             awaitPointerEventScope {
                 while (true) {
@@ -71,14 +74,34 @@ fun ProductCard(
             }
         }) {
         Box(modifier = modifier) {
-            GlideImage(
-                modifier = Modifier
+//            GlideImage(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .clip(shape = RoundedCornerShape(10.dp)),
+//                model = product.thumbnail,
+//                contentDescription = null,
+//                transition = CrossFade
+//            )
+            GlideSubcomposition(
+                modifier = modifier
                     .fillMaxSize()
-                    .clip(shape = RoundedCornerShape(10.dp)),
-                model = product.thumbnail,
-                contentDescription = null,
-                transition = CrossFade
-            )
+                    .clip(RoundedCornerShape(10.dp)),
+                model = product.thumbnail
+            ) {
+                when (state) {
+                    RequestState.Failure -> {}
+                    RequestState.Loading -> {
+                        Box(
+                            modifier = modifier
+                                .size(200.dp)
+                                .shimmerEffect()
+                                .clip(shape = RoundedCornerShape(10.dp))
+                        )
+                    }
+
+                    is RequestState.Success -> Image(painter = painter, contentDescription = null)
+                }
+            }
             Box(
                 modifier = modifier
                     .size(28.dp)
@@ -97,7 +120,7 @@ fun ProductCard(
             }
         }
         Spacer(modifier = modifier.height(8.dp))
-        Column() {
+        Column {
             Text(
                 text = "${product.price} ₽",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)

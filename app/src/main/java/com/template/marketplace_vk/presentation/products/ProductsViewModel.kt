@@ -18,10 +18,15 @@ class ProductsViewModel @Inject constructor(
     private val _listOfProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
     val listOfProducts = _listOfProducts.asStateFlow()
 
-    private val _isSearchInProgress:MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _isSearchInProgress: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isSearchInProgress = _isSearchInProgress.asStateFlow()
+
+    private val _listOfCategories: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+    val listOfCategories = _listOfCategories.asStateFlow()
+
     init {
         getProducts()
+        getCategories()
     }
 
     fun getProducts() {
@@ -53,6 +58,14 @@ class ProductsViewModel @Inject constructor(
     fun clearProductsList() {
         viewModelScope.launch {
             _listOfProducts.emit(emptyList())
+        }
+    }
+
+    private fun getCategories() {
+        viewModelScope.launch {
+            _listOfCategories.emit(
+                productsRepository.getCategories()
+            )
         }
     }
 }

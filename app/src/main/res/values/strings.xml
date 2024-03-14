@@ -12,4 +12,6 @@
     <string name="out_of_stock">НЕТ В НАЛИЧИИ</string>
     <string name="search_bar_placeholder">НАЙТИ ТОВАРЫ</string>
     <string name="nothing_was_found">Ничего не найдено. Попробуйте изменить запрос и мы поищем ещё раз.</string>
+    <string name="filter">Фильтры</string>
+    <string name="show_products">Показать товары</string>
 </resources>
