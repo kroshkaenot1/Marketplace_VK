@@ -43,6 +43,7 @@ fun Products(
     val focusManager = LocalFocusManager.current
     val isSearchInProgress = productsViewModel.isSearchInProgress.collectAsState()
     val listOfProducts = productsViewModel.listOfProducts.collectAsState()
+    val error = productsViewModel.error.collectAsState()
     val lazyGridState = rememberLazyGridState()
     val searchBarState = remember {
         mutableStateOf(SearchBarStates.EMPTY)
@@ -61,7 +62,14 @@ fun Products(
                 onFiltersOpen = { isFiltersOpen = true })
         }
     ) { paddingValues ->
-        if (listOfProducts.value.isEmpty()) {
+        if (error.value != "") {
+            Text(
+                modifier = modifier
+                    .padding(paddingValues = paddingValues)
+                    .padding(start = 10.dp, end = 10.dp, top = 10.dp),
+                text = context.getString(R.string.lost_connection)
+            )
+        } else if (listOfProducts.value.isEmpty()) {
             if (!isSearchInProgress.value) {
                 Text(
                     modifier = modifier
@@ -106,7 +114,7 @@ fun Products(
                         if (searchBarState.value == SearchBarStates.SEARCHING) {
                             productsViewModel.searchProducts(name = textState.value.text)
                         } else {
-                            productsViewModel.getProducts()
+                            productsViewModel.fetchProducts()
                         }
                     }
                     ProductCard(product = listOfProducts.value[index],

@@ -14,4 +14,5 @@
     <string name="nothing_was_found">Ничего не найдено. Попробуйте изменить запрос и мы поищем ещё раз.</string>
     <string name="filter">Фильтры</string>
     <string name="show_products">Показать товары</string>
+    <string name="lost_connection">Проверьте подключение к интернету и перезапустите приложение.</string>
 </resources>

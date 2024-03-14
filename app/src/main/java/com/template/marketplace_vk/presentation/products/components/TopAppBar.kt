@@ -57,7 +57,7 @@ fun TopAppBar(
                     searchBarState.value = SearchBarStates.EMPTY
                     textState.value = TextFieldValue("")
                     productsViewModel.clearProductsList()
-                    productsViewModel.getProducts()
+                    productsViewModel.fetchProducts()
 
                 }) {
                     Icon(
@@ -83,7 +83,7 @@ fun TopAppBar(
                             if (searchBarState.value == SearchBarStates.SEARCHING) {
                                 searchBarState.value = SearchBarStates.EMPTY
                                 productsViewModel.clearProductsList()
-                                productsViewModel.getProducts()
+                                productsViewModel.fetchProducts()
                             }
                         }) {
                             Icon(imageVector = Icons.Default.Clear, contentDescription = null)

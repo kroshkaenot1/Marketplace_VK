@@ -1,4 +1,4 @@
-package com.template.marketplace_vk.data.remote
+package com.template.marketplace_vk.data.remote.api
 
 import com.template.marketplace_vk.data.models.ListOfProducts
 import retrofit2.http.GET

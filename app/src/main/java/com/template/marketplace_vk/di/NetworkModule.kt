@@ -1,11 +1,13 @@
 package com.template.marketplace_vk.di
 
 import android.content.Context
+import android.net.ConnectivityManager
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.template.marketplace_vk.BuildConfig
 import com.template.marketplace_vk.R
-import com.template.marketplace_vk.data.remote.APIProducts
+import com.template.marketplace_vk.data.remote.api.APIProducts
+import com.template.marketplace_vk.data.remote.interceptor.NetworkInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,6 +23,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
+
+    @Singleton
+    @Provides
+    fun provideConnectivityManager(@ApplicationContext context: Context): ConnectivityManager {
+        return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
     @Singleton
     @Provides
     fun provideRateController(
@@ -29,14 +38,16 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient() =
-        if (BuildConfig.DEBUG) {
+    fun provideOkHttpClient(connectivityManager: ConnectivityManager): OkHttpClient {
+        val networkInterceptor = NetworkInterceptor(connectivityManager)
+        return if (BuildConfig.DEBUG) {
             OkHttpClient.Builder()
                 .addNetworkInterceptor(
                     HttpLoggingInterceptor().apply {
                         this.level = HttpLoggingInterceptor.Level.BODY
                     }
                 )
+                .addNetworkInterceptor(networkInterceptor)
                 .connectTimeout(100, TimeUnit.SECONDS)
                 .readTimeout(100, TimeUnit.SECONDS)
                 .writeTimeout(100, TimeUnit.SECONDS)
@@ -48,6 +59,7 @@ class NetworkModule {
                 .writeTimeout(20, TimeUnit.SECONDS)
                 .build()
         }
+    }
 
     @Singleton
     @Provides

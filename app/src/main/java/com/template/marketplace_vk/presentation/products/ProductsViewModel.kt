@@ -2,7 +2,9 @@ package com.template.marketplace_vk.presentation.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.template.marketplace_vk.data.models.CategoriesResult
 import com.template.marketplace_vk.data.models.Product
+import com.template.marketplace_vk.data.models.ProductsResult
 import com.template.marketplace_vk.domain.ProductsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,20 +26,31 @@ class ProductsViewModel @Inject constructor(
     private val _listOfCategories: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
     val listOfCategories = _listOfCategories.asStateFlow()
 
+    private val _error: MutableStateFlow<String> = MutableStateFlow("")
+    val error = _error.asStateFlow()
+
     init {
-        getProducts()
-        getCategories()
+        fetchProducts()
+        fetchCategories()
     }
 
-    fun getProducts() {
+    fun fetchProducts() {
         viewModelScope.launch {
             _isSearchInProgress.emit(true)
             val skip = _listOfProducts.value.size
-            _listOfProducts.emit(
-                _listOfProducts.value.plus(
-                    productsRepository.getProducts(skip = skip).products
-                )
-            )
+            when (val productsResult = productsRepository.getProducts(skip = skip)) {
+                is ProductsResult.Error -> {
+                    _error.emit(productsResult.message)
+                }
+
+                is ProductsResult.Success -> {
+                    _listOfProducts.emit(
+                        _listOfProducts.value.plus(
+                            productsResult.products
+                        )
+                    )
+                }
+            }
             _isSearchInProgress.emit(false)
         }
     }
@@ -46,11 +59,20 @@ class ProductsViewModel @Inject constructor(
         viewModelScope.launch {
             _isSearchInProgress.emit(true)
             val skip = _listOfProducts.value.size
-            _listOfProducts.emit(
-                _listOfProducts.value.plus(
-                    productsRepository.searchProducts(skip = skip, name = name).products
-                )
-            )
+            when (val productsResult =
+                productsRepository.searchProducts(skip = skip, name = name)) {
+                is ProductsResult.Error -> {
+                    _error.emit(productsResult.message)
+                }
+
+                is ProductsResult.Success -> {
+                    _listOfProducts.emit(
+                        _listOfProducts.value.plus(
+                            productsResult.products
+                        )
+                    )
+                }
+            }
             _isSearchInProgress.emit(false)
         }
     }
@@ -61,11 +83,17 @@ class ProductsViewModel @Inject constructor(
         }
     }
 
-    private fun getCategories() {
+    private fun fetchCategories() {
         viewModelScope.launch {
-            _listOfCategories.emit(
-                productsRepository.getCategories()
-            )
+            when (val categoriesResult = productsRepository.getCategories()) {
+                is CategoriesResult.Error -> {}
+                is CategoriesResult.Success -> {
+                    _listOfCategories.emit(
+                        categoriesResult.categories
+                    )
+                }
+            }
+
         }
     }
 }
