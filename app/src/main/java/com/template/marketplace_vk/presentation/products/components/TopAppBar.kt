@@ -121,7 +121,7 @@ fun TopAppBar(
                 )
             )
         }
-        if (searchBarState.value == SearchBarStates.SEARCHING) {
+        if (searchBarState.value == SearchBarStates.EMPTY) {
             Row(
                 modifier = modifier
                     .padding(10.dp)
@@ -132,6 +132,7 @@ fun TopAppBar(
                                 when (event.type) {
                                     PointerEventType.Press -> {
                                         onFiltersOpen()
+                                        focusManager.clearFocus()
                                     }
 
                                     else -> {}

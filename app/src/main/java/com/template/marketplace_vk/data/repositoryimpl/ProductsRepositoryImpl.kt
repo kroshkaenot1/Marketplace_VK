@@ -3,7 +3,8 @@ package com.template.marketplace_vk.data.repositoryimpl
 import com.template.marketplace_vk.data.models.CategoriesResult
 import com.template.marketplace_vk.data.models.ProductsResult
 import com.template.marketplace_vk.data.remote.api.APIProducts
-import com.template.marketplace_vk.domain.ProductsRepository
+import com.template.marketplace_vk.domain.model.Category
+import com.template.marketplace_vk.domain.repository.ProductsRepository
 import javax.inject.Inject
 
 class ProductsRepositoryImpl @Inject constructor(
@@ -30,9 +31,21 @@ class ProductsRepositoryImpl @Inject constructor(
     override suspend fun getCategories(): CategoriesResult {
         return try {
             val response = apiProducts.getCategories()
-            CategoriesResult.Success(response)
+            val result = response.map { categoryName ->
+                Category(name = categoryName)
+            }
+            CategoriesResult.Success(result)
         } catch (e: Exception) {
             CategoriesResult.Error(e.message ?: "Неизвестная ошибка")
+        }
+    }
+
+    override suspend fun getProductsByCategory(category: String): ProductsResult {
+        return try {
+            val response = apiProducts.getProductsByCategory(category = category)
+            ProductsResult.Success(response.products)
+        } catch (e: Exception) {
+            ProductsResult.Error(e.message ?: "Неизвестная ошибка")
         }
     }
 }

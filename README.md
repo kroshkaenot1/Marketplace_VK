@@ -21,6 +21,8 @@
 
 - Просмотр списка всех товаров.
 - Поиск определенных товаров.
+- Просмотр категорий товаров.
+- Просмотр товаров по выбранным категориям.
 - Детальный просмотр каждого товара с отображением всех изображений товара.
 - Получение данных о товарах с использованием Retrofit.
 - Управление зависимостями с помощью Hilt-Dagger.
@@ -59,6 +61,10 @@ Query параметры:
 - `skip`: количество товаров, которые нужно пропустить в начале списка.
 - `q`: наименование товара.
 
+URL для получения товаров по категориям: `https://dummyjson.com/products/category/{categoryName}`
+
+URL для поиска категорий товаров: `https://dummyjson.com/products/search`
+
 ## Начало работы
 
 1. Клонируйте репозиторий на свой компьютер.
@@ -78,8 +84,9 @@ git clone https://github.com/kroshkaenot1/Marketplace_VK.git
 ## Скриншоты
 
 Точка старта приложения - экран со списком товаров
-
+<img alt="img.png" height="600" src="readme_img/loading_products.jpg" width="290"/>
 <img alt="img.png" height="600" src="readme_img/products_list.jpg" width="290"/>
+<img alt="img.png" height="600" src="readme_img/connection_problems.jpg" width="290"/>
 
 Для детального просмотра необходимо нажатием перейти к карточке товара
 
@@ -88,4 +95,8 @@ git clone https://github.com/kroshkaenot1/Marketplace_VK.git
 Также можно воспользоваться поиском товаров
 
 <img alt="img.png" height="600" src="readme_img/products_search.jpg" width="290"/>
-<img alt="img.png" height="600" src="readme_img/search_not_found.jpg" width="290"/>
+<img alt="img.png" height="600" src="readme_img/products_not_found.jpg" width="290"/>
+
+Доступно отображение товаров по фильтру категорий
+
+<img alt="img.png" height="600" src="readme_img/filters.jpg" width="290"/>

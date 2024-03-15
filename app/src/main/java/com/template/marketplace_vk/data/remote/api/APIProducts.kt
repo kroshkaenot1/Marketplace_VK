@@ -2,6 +2,7 @@ package com.template.marketplace_vk.data.remote.api
 
 import com.template.marketplace_vk.data.models.ListOfProducts
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface APIProducts {
@@ -20,4 +21,9 @@ interface APIProducts {
 
     @GET("product/categories")
     suspend fun getCategories(): List<String>
+
+    @GET("products/category/{category}")
+    suspend fun getProductsByCategory(
+        @Path("category") category : String
+    ): ListOfProducts
 }

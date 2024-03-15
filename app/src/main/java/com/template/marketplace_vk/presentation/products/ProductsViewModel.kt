@@ -5,7 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.template.marketplace_vk.data.models.CategoriesResult
 import com.template.marketplace_vk.data.models.Product
 import com.template.marketplace_vk.data.models.ProductsResult
-import com.template.marketplace_vk.domain.ProductsRepository
+import com.template.marketplace_vk.domain.model.Category
+import com.template.marketplace_vk.domain.repository.ProductsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +24,7 @@ class ProductsViewModel @Inject constructor(
     private val _isSearchInProgress: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isSearchInProgress = _isSearchInProgress.asStateFlow()
 
-    private val _listOfCategories: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+    private val _listOfCategories: MutableStateFlow<List<Category>> = MutableStateFlow(emptyList())
     val listOfCategories = _listOfCategories.asStateFlow()
 
     private val _error: MutableStateFlow<String> = MutableStateFlow("")
@@ -93,7 +94,36 @@ class ProductsViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
 
+    fun fetchProductsByCategory(categories: List<String>) {
+        viewModelScope.launch {
+            _isSearchInProgress.emit(true)
+            clearProductsList()
+            categories.forEach { category ->
+                when (val productsResult =
+                    productsRepository.getProductsByCategory(category = category)) {
+                    is ProductsResult.Error -> {
+                        _error.emit(productsResult.message)
+                    }
+
+                    is ProductsResult.Success -> {
+                        _listOfProducts.emit(
+                            _listOfProducts.value.plus(
+                                productsResult.products
+                            )
+                        )
+                    }
+                }
+            }
+            _isSearchInProgress.emit(false)
+        }
+    }
+
+    fun clearSelectedCategories() {
+        _listOfCategories.value.forEach { category ->
+            category.isSelected.value = false
         }
     }
 }

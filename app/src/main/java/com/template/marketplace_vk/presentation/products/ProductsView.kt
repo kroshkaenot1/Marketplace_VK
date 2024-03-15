@@ -44,6 +44,7 @@ fun Products(
     val isSearchInProgress = productsViewModel.isSearchInProgress.collectAsState()
     val listOfProducts = productsViewModel.listOfProducts.collectAsState()
     val error = productsViewModel.error.collectAsState()
+    val listOfCategories = productsViewModel.listOfCategories.collectAsState()
     val lazyGridState = rememberLazyGridState()
     val searchBarState = remember {
         mutableStateOf(SearchBarStates.EMPTY)
@@ -139,6 +140,16 @@ fun Products(
             Filters(onClose = {
                 isFiltersOpen = false
                 focusManager.clearFocus()
-            })
+                productsViewModel.clearSelectedCategories()
+            },
+                onCloseAndConfirm = {
+                    isFiltersOpen = false
+                    searchBarState.value = SearchBarStates.SEARCHING
+                    val listOfSelectedCategoriesNames = listOfCategories.value
+                        .filter { category -> category.isSelected.value }
+                        .map { category -> category.name }
+                    productsViewModel.clearSelectedCategories()
+                    productsViewModel.fetchProductsByCategory(listOfSelectedCategoriesNames)
+                })
         })
 }

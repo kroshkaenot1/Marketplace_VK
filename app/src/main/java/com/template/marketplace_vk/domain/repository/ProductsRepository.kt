@@ -1,4 +1,4 @@
-package com.template.marketplace_vk.domain
+package com.template.marketplace_vk.domain.repository
 
 import com.template.marketplace_vk.data.models.CategoriesResult
 import com.template.marketplace_vk.data.models.ProductsResult
@@ -17,4 +17,6 @@ interface ProductsRepository {
     ): ProductsResult
 
     suspend fun getCategories(): CategoriesResult
+
+    suspend fun getProductsByCategory(category: String): ProductsResult
 }

@@ -15,4 +15,5 @@
     <string name="filter">Фильтры</string>
     <string name="show_products">Показать товары</string>
     <string name="lost_connection">Проверьте подключение к интернету и перезапустите приложение.</string>
+    <string name="filter_categories">Категории</string>
 </resources>
