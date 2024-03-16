@@ -29,8 +29,6 @@ import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import com.template.marketplace_vk.data.models.Product
 import com.template.marketplace_vk.presentation.utils.shimmerEffect
-
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProductCard(
     modifier: Modifier = Modifier,
@@ -73,52 +71,7 @@ fun ProductCard(
                 }
             }
         }) {
-        Box(modifier = modifier) {
-//            GlideImage(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .clip(shape = RoundedCornerShape(10.dp)),
-//                model = product.thumbnail,
-//                contentDescription = null,
-//                transition = CrossFade
-//            )
-            GlideSubcomposition(
-                modifier = modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(10.dp)),
-                model = product.thumbnail
-            ) {
-                when (state) {
-                    RequestState.Failure -> {}
-                    RequestState.Loading -> {
-                        Box(
-                            modifier = modifier
-                                .size(200.dp)
-                                .shimmerEffect()
-                                .clip(shape = RoundedCornerShape(10.dp))
-                        )
-                    }
-
-                    is RequestState.Success -> Image(painter = painter, contentDescription = null)
-                }
-            }
-            Box(
-                modifier = modifier
-                    .size(28.dp)
-                    .align(Alignment.TopStart)
-                    .background(color = Color.Red, shape = RoundedCornerShape(10.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "%.0f".format(product.discountPercentage) + "%",
-                    style = TextStyle.Default.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 10.sp
-                    ),
-                    color = Color.White
-                )
-            }
-        }
+        ImageOfProduct(product = product)
         Spacer(modifier = modifier.height(8.dp))
         Column {
             Text(
@@ -134,6 +87,50 @@ fun ProductCard(
             Text(
                 text = product.description,
                 style = MaterialTheme.typography.bodySmall
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun ImageOfProduct(modifier: Modifier = Modifier,
+                   product: Product){
+    Box(modifier = modifier) {
+        GlideSubcomposition(
+            modifier = modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(10.dp)),
+            model = product.thumbnail
+        ) {
+            when (state) {
+                RequestState.Failure -> {}
+                RequestState.Loading -> {
+                    Box(
+                        modifier = modifier
+                            .size(200.dp)
+                            .shimmerEffect()
+                            .clip(shape = RoundedCornerShape(10.dp))
+                    )
+                }
+
+                is RequestState.Success -> Image(painter = painter, contentDescription = null)
+            }
+        }
+        Box(
+            modifier = modifier
+                .size(28.dp)
+                .align(Alignment.TopStart)
+                .background(color = Color.Red, shape = RoundedCornerShape(10.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "%.0f".format(product.discountPercentage) + "%",
+                style = TextStyle.Default.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 10.sp
+                ),
+                color = Color.White
             )
         }
     }

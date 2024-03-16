@@ -21,9 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.template.marketplace_vk.R
 import com.template.marketplace_vk.data.models.Product
-import com.template.marketplace_vk.presentation.product.DISCOUNT_TEXT_COLOR
 import kotlin.math.ceil
 
 @Composable
@@ -74,7 +74,7 @@ fun ProductDescription(
                     )
                 ) + "%",
                 style = MaterialTheme.typography.titleSmall.copy(
-                    color = Color(DISCOUNT_TEXT_COLOR)
+                    color = Color(ContextCompat.getColor(context, R.color.discount_text))
                 )
             )
         }
@@ -103,27 +103,26 @@ fun ProductDescription(
             lineHeight = 20.sp
         )
     }
-    Text(
-        modifier = modifier.padding(10.dp),
-        text = context.getString(R.string.description),
-        style = MaterialTheme.typography.titleLarge.copy(
-            fontWeight = FontWeight.Bold
-        )
-    )
-    Text(
-        modifier = modifier.padding(10.dp),
-        text = product.description
-    )
-    Text(
-        modifier = modifier.padding(10.dp),
-        text = context.getString(R.string.about_brand),
-        style = MaterialTheme.typography.titleLarge.copy(
-            fontWeight = FontWeight.Bold
-        )
-    )
-    Text(
-        modifier = modifier.padding(10.dp),
-        text = product.brand
-    )
+    TextDescriptionForProduct(product = { product.description }, stringId = R.string.description)
+    TextDescriptionForProduct(product = { product.brand }, stringId = R.string.about_brand)
+}
 
+@Composable
+fun TextDescriptionForProduct(
+    modifier: Modifier = Modifier,
+    stringId: Int,
+    product: () -> String
+) {
+    val context = LocalContext.current
+    Text(
+        modifier = modifier.padding(10.dp),
+        text = context.getString(stringId),
+        style = MaterialTheme.typography.titleLarge.copy(
+            fontWeight = FontWeight.Bold
+        )
+    )
+    Text(
+        modifier = modifier.padding(10.dp),
+        text = product()
+    )
 }

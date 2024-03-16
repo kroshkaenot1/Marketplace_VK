@@ -84,6 +84,7 @@ git clone https://github.com/kroshkaenot1/Marketplace_VK.git
 ## Скриншоты
 
 Точка старта приложения - экран со списком товаров
+
 <img alt="img.png" height="600" src="readme_img/loading_products.jpg" width="290"/>
 <img alt="img.png" height="600" src="readme_img/products_list.jpg" width="290"/>
 <img alt="img.png" height="600" src="readme_img/connection_problems.jpg" width="290"/>

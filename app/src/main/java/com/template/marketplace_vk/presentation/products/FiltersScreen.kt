@@ -1,4 +1,4 @@
-package com.template.marketplace_vk.presentation.products.components
+package com.template.marketplace_vk.presentation.products
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.template.marketplace_vk.R
-import com.template.marketplace_vk.presentation.products.ProductsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable

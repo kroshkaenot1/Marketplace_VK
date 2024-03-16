@@ -27,7 +27,6 @@ import com.template.marketplace_vk.data.models.Product
 import com.template.marketplace_vk.presentation.product.ProductDetails
 import com.template.marketplace_vk.presentation.products.animations.AnimatedFiltersOpen
 import com.template.marketplace_vk.presentation.products.animations.AnimatedProductDetails
-import com.template.marketplace_vk.presentation.products.components.Filters
 import com.template.marketplace_vk.presentation.products.components.ProductCard
 import com.template.marketplace_vk.presentation.products.components.TopAppBar
 import com.template.marketplace_vk.presentation.splash.SplashScreen

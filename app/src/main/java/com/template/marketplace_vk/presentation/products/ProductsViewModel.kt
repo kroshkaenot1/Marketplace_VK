@@ -1,12 +1,18 @@
 package com.template.marketplace_vk.presentation.products
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.template.marketplace_vk.data.models.CategoriesResult
 import com.template.marketplace_vk.data.models.Product
 import com.template.marketplace_vk.data.models.ProductsResult
 import com.template.marketplace_vk.domain.model.Category
-import com.template.marketplace_vk.domain.repository.ProductsRepository
+import com.template.marketplace_vk.domain.usecase.GetAllCategoriesUseCase
+import com.template.marketplace_vk.domain.usecase.GetAllProductsByCategoryUseCase
+import com.template.marketplace_vk.domain.usecase.GetAllProductsUseCase
+import com.template.marketplace_vk.domain.usecase.GetProductsByNameUseCase
+import com.template.marketplace_vk.presentation.utils.SearchBarStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductsViewModel @Inject constructor(
-    private val productsRepository: ProductsRepository
+    private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
+    private val getAllProductsUseCase: GetAllProductsUseCase,
+    private val getAllProductsByCategoryUseCase: GetAllProductsByCategoryUseCase,
+    private val getProductsByNameUseCase: GetProductsByNameUseCase
 ) : ViewModel() {
 
     private val _listOfProducts: MutableStateFlow<List<Product>> = MutableStateFlow(emptyList())
@@ -39,7 +48,7 @@ class ProductsViewModel @Inject constructor(
         viewModelScope.launch {
             _isSearchInProgress.emit(true)
             val skip = _listOfProducts.value.size
-            when (val productsResult = productsRepository.getProducts(skip = skip)) {
+            when (val productsResult = getAllProductsUseCase.execute(skip = skip)) {
                 is ProductsResult.Error -> {
                     _error.emit(productsResult.message)
                 }
@@ -61,7 +70,7 @@ class ProductsViewModel @Inject constructor(
             _isSearchInProgress.emit(true)
             val skip = _listOfProducts.value.size
             when (val productsResult =
-                productsRepository.searchProducts(skip = skip, name = name)) {
+                getProductsByNameUseCase.execute(skip = skip, name = name)) {
                 is ProductsResult.Error -> {
                     _error.emit(productsResult.message)
                 }
@@ -86,8 +95,11 @@ class ProductsViewModel @Inject constructor(
 
     private fun fetchCategories() {
         viewModelScope.launch {
-            when (val categoriesResult = productsRepository.getCategories()) {
-                is CategoriesResult.Error -> {}
+            when (val categoriesResult = getAllCategoriesUseCase.execute()) {
+                is CategoriesResult.Error -> {
+                    _error.emit(categoriesResult.message)
+                }
+
                 is CategoriesResult.Success -> {
                     _listOfCategories.emit(
                         categoriesResult.categories
@@ -103,7 +115,7 @@ class ProductsViewModel @Inject constructor(
             clearProductsList()
             categories.forEach { category ->
                 when (val productsResult =
-                    productsRepository.getProductsByCategory(category = category)) {
+                    getAllProductsByCategoryUseCase.execute(category = category)) {
                     is ProductsResult.Error -> {
                         _error.emit(productsResult.message)
                     }
@@ -125,5 +137,15 @@ class ProductsViewModel @Inject constructor(
         _listOfCategories.value.forEach { category ->
             category.isSelected.value = false
         }
+    }
+
+    fun clearSearchBarAndFetchProducts(
+        textState: MutableState<TextFieldValue>,
+        searchBarState: MutableState<SearchBarStates>
+    ) {
+        searchBarState.value = SearchBarStates.EMPTY
+        textState.value = TextFieldValue("")
+        clearProductsList()
+        fetchProducts()
     }
 }

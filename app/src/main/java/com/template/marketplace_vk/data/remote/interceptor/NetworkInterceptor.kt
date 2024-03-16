@@ -5,10 +5,11 @@ import android.net.NetworkCapabilities
 import com.template.marketplace_vk.domain.exceptions.NoConnectivityException
 import okhttp3.Interceptor
 import okhttp3.Response
+import java.io.IOException
 
 class NetworkInterceptor(private val connectivityManager: ConnectivityManager) : Interceptor {
 
-    @Throws(Exception::class)
+    @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         if (!isInternetAvailable()) {
             throw NoConnectivityException()
